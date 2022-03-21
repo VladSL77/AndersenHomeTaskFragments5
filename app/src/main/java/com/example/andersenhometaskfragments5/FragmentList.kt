@@ -23,7 +23,7 @@ class FragmentList : Fragment(R.layout.list_fragment), BackPressedListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        infoClickListener = context as InfoClickListener
+        if (context is InfoClickListener) infoClickListener = context
     }
 
     private fun init() {

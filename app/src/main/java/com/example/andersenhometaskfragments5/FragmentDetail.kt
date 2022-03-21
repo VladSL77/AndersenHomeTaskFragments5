@@ -25,7 +25,7 @@ class FragmentDetail : Fragment(R.layout.detail_fragment), BackPressedListener {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        saveButtonClickListener = context as SaveButtonClickListener
+        if (context is SaveButtonClickListener) saveButtonClickListener = context
     }
 
     private fun init() {
@@ -64,8 +64,18 @@ class FragmentDetail : Fragment(R.layout.detail_fragment), BackPressedListener {
         super.onViewCreated(view, savedInstanceState)
 
         init()
-        changeInfo()
         view.findViewById<Button>(R.id.buttonSave).setOnClickListener {
+            if (etFirstName.text.toString() != "" && etLastName.text.toString() != "" && etNumber.text.toString() != "") {
+                newFirstName = etFirstName.text.toString()
+                newLastName = etLastName.text.toString()
+                newNumber = etNumber.text.toString()
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.error_empty_field),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
             when (index) {
                 INDEX_CONTACT_1 -> {
                     list[0] = newFirstName
@@ -92,58 +102,6 @@ class FragmentDetail : Fragment(R.layout.detail_fragment), BackPressedListener {
         fun onSaveButtonClicked(list: ArrayList<String>)
     }
 
-    private fun changeInfo() {
-
-        etFirstName.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                if (etFirstName.text.toString() != "") {
-                    newFirstName = etFirstName.text.toString()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.error_empty_field),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                return@OnKeyListener true
-            }
-            false
-        })
-
-        etLastName.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                if (etLastName.text.toString() != "") {
-                    newLastName = etLastName.text.toString()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.error_empty_field),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                return@OnKeyListener true
-            }
-            false
-        })
-
-        etNumber.setOnKeyListener(View.OnKeyListener { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
-                if (etNumber.text.toString() != "") {
-                    newNumber = etNumber.text.toString()
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.error_empty_field),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-                return@OnKeyListener true
-            }
-            false
-        })
-
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putStringArrayList(KEY_LIST, list)
@@ -167,6 +125,5 @@ class FragmentDetail : Fragment(R.layout.detail_fragment), BackPressedListener {
                 putInt(KEY_INDEX, index)
             }
         }
-
     }
 }
